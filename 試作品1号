@@ -1,1 +1,31 @@
+## Plan: Create Go HTTP Reverse Proxy
 
+TL;DR - Build a small Go HTTP reverse proxy for local development that forwards incoming requests to a configured backend target. The proxy will use Go standard library reverse proxy support and support configuration via command-line flags or environment variables.
+
+**Steps**
+1. Initialize a Go module in the repository root (create `go.mod`).
+2. Add a proxy implementation in `proxy.go`.
+   - Parse `-listen` and `-target` flags.
+   - Use `url.Parse` and `httputil.NewSingleHostReverseProxy`.
+   - Log requests and proxy errors.
+3. Keep the proxy simple for development usage.
+4. Update `README.md` with usage instructions and examples.
+
+**Relevant files**
+- `/workspaces/turbo-garbanzo/go.mod` — module definition and Go version.
+- `/workspaces/turbo-garbanzo/proxy.go` — main proxy implementation.
+- `/workspaces/turbo-garbanzo/README.md` — document how to run and configure the proxy.
+
+**Verification**
+1. Run `go run proxy.go -listen=:8080 -target=http://localhost:3000` and confirm the process starts.
+2. Use `curl` against the proxy to verify requests are forwarded to the target.
+3. Confirm the proxy logs request paths and errors.
+
+**Decisions**
+- Use Go standard library (`net/http`, `net/http/httputil`) for minimal dependencies.
+- Implement as an HTTP reverse proxy tailored for local API forwarding.
+- Exclude advanced features such as SOCKS, full HTTPS certificate management, or authentication unless asked later.
+
+**Further Considerations**
+1. If the user wants full HTTP proxy semantics (CONNECT, proxy-auth, arbitrary external destinations), implement a different proxy style.
+2. If HTTPS termination is needed, support TLS certificates or `CONNECT` handling separately.
